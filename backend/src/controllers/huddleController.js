@@ -64,10 +64,9 @@ const getMyHuddles = async (req, res) => {
 // @route GET /api/huddles/invite/:code  (optionalAuth) - the guest-friendly join view
 const getHuddleByInviteCode = async (req, res) => {
   try {
-    const huddle = await Huddle.findOne({ inviteCode: req.params.code }).populate(
-      "organizer",
-      "name avatarColor"
-    );
+    const huddle = await Huddle.findOne({ inviteCode: req.params.code })
+      .populate("organizer", "name avatarColor")
+      .populate("participants.user", "name avatarColor");
     if (!huddle) return res.status(404).json({ message: "Huddle not found" });
     res.json(huddle);
   } catch (err) {
@@ -78,7 +77,9 @@ const getHuddleByInviteCode = async (req, res) => {
 // @route GET /api/huddles/:id  (optionalAuth)
 const getHuddleById = async (req, res) => {
   try {
-    const huddle = await Huddle.findById(req.params.id).populate("organizer", "name avatarColor");
+    const huddle = await Huddle.findById(req.params.id)
+      .populate("organizer", "name avatarColor")
+      .populate("participants.user", "name avatarColor");
     if (!huddle) return res.status(404).json({ message: "Huddle not found" });
     res.json(huddle);
   } catch (err) {

@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Color tokens — "golden hour hangout" palette */
+  --color-ink: #1b1130;        /* deep plum-indigo background */
+  --color-ink-soft: #2a1c47;   /* raised surface on ink */
+  --color-paper: #f7f3ff;      /* warm lavender-white */
+  --color-paper-dim: #ece4fb;  /* muted paper for secondary surfaces */
+  --color-coral: #ff6f59;      /* primary CTA */
+  --color-coral-dark: #e8543e;
+  --color-gold: #ffc857;       /* vote accent */
+  --color-teal: #2ec4b6;       /* "going" RSVP */
+  --color-line: #3d2c63;       /* dividers on ink */
+  --color-line-light: #ddd0f7; /* dividers on paper */
+
+  --font-display: "Unbounded", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-coral);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Perforated edge used on the ticket-stub huddle card */
+.perforated {
+  position: relative;
+}
+.perforated::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--perf-position, 38%);
+  width: 0;
+  border-left: 2px dashed var(--color-line-light);
+}
+.perforated::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: calc(var(--perf-position, 38%) - 12px);
+  width: 24px;
+  height: 24px;
+  background: var(--color-ink);
+  border-radius: 999px;
+}
+
+@media (max-width: 768px) {
+  .perforated::before,
+  .perforated::after {
+    display: none;
+  }
+}
