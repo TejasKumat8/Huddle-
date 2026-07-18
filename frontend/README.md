@@ -60,6 +60,6 @@ src/
 
 ## Coming in later sessions
 
-- [ ] Socket.io client — live vote/RSVP updates without refreshing
+- [x] Socket.io client — live vote/RSVP updates without refreshing
 - [ ] Google Places autocomplete for location options
 - [ ] Deployment (Vercel)

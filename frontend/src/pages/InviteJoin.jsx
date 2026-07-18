@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHuddleByInviteCode, clearCurrentHuddle } from "../store/huddleSlice";
+import { useHuddleLiveUpdates } from "../hooks/useHuddleLiveUpdates";
 import HuddleBoard from "../components/HuddleBoard";
 import Logo from "../components/Logo";
 
@@ -14,6 +15,8 @@ export default function InviteJoin() {
     dispatch(fetchHuddleByInviteCode(code));
     return () => dispatch(clearCurrentHuddle());
   }, [dispatch, code]);
+
+  useHuddleLiveUpdates(current?._id);
 
   if (!current && actionStatus !== "failed") {
     return <p className="mx-auto max-w-4xl px-6 py-20 text-center text-paper/50">Finding your huddle…</p>;

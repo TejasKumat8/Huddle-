@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHuddleById, clearCurrentHuddle } from "../store/huddleSlice";
+import { useHuddleLiveUpdates } from "../hooks/useHuddleLiveUpdates";
 import HuddleBoard from "../components/HuddleBoard";
 
 export default function HuddleDetail() {
@@ -13,6 +14,8 @@ export default function HuddleDetail() {
     dispatch(fetchHuddleById(id));
     return () => dispatch(clearCurrentHuddle());
   }, [dispatch, id]);
+
+  useHuddleLiveUpdates(current?._id);
 
   if (!current && actionStatus !== "failed") {
     return <p className="mx-auto max-w-4xl px-6 py-20 text-center text-paper/50">Loading huddle…</p>;

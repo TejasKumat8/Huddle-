@@ -136,6 +136,14 @@ const huddleSlice = createSlice({
     clearHuddleError(state) {
       state.error = null;
     },
+    // Applied when a Socket.io "huddleUpdated" event comes in — someone
+    // else voted/RSVP'd/finalized and we want the board to update live
+    // without the current user having to trigger a fetch themselves.
+    receiveLiveHuddleUpdate(state, action) {
+      if (state.current && state.current._id === action.payload._id) {
+        state.current = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -186,5 +194,5 @@ const huddleSlice = createSlice({
   },
 });
 
-export const { clearCurrentHuddle, clearHuddleError } = huddleSlice.actions;
+export const { clearCurrentHuddle, clearHuddleError, receiveLiveHuddleUpdate } = huddleSlice.actions;
 export default huddleSlice.reducer;

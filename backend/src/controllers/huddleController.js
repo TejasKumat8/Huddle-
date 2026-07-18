@@ -15,6 +15,19 @@ const isSameActor = (voter, actor) => {
   return voter.guestId === actor.guestId;
 };
 
+// Re-fetches the huddle with the same population shape the REST GET routes
+// use, then emits it to everyone currently viewing that huddle's room.
+// Re-fetching (rather than emitting the raw doc) keeps the socket payload
+// and the REST payload identical, so the frontend reducer can treat both
+// the same way.
+const broadcastHuddleUpdate = async (req, huddleId) => {
+  const io = req.app.get("io");
+  const populated = await Huddle.findById(huddleId)
+    .populate("organizer", "name avatarColor")
+    .populate("participants.user", "name avatarColor");
+  io.to(huddleId.toString()).emit("huddleUpdated", populated);
+};
+
 // @route POST /api/huddles  (protect)
 const createHuddle = async (req, res) => {
   try {
@@ -101,6 +114,7 @@ const joinHuddle = async (req, res) => {
     if (!alreadyIn) {
       huddle.participants.push({ ...actor, rsvp: "pending" });
       await huddle.save();
+      await broadcastHuddleUpdate(req, huddle._id);
     }
 
     res.json(huddle);
@@ -131,6 +145,7 @@ const setRsvp = async (req, res) => {
     }
 
     await huddle.save();
+    await broadcastHuddleUpdate(req, huddle._id);
     res.json(huddle);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -161,6 +176,7 @@ const toggleVote = async (req, res, optionListName) => {
     }
 
     await huddle.save();
+    await broadcastHuddleUpdate(req, huddle._id);
     res.json(huddle);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -187,6 +203,7 @@ const addLocationOption = async (req, res) => {
 
     huddle.locationOptions.push({ name, address, placeId, lat, lng, votes: [] });
     await huddle.save();
+    await broadcastHuddleUpdate(req, huddle._id);
     res.status(201).json(huddle);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -229,6 +246,7 @@ const finalizeHuddle = async (req, res) => {
     huddle.status = "finalized";
 
     await huddle.save();
+    await broadcastHuddleUpdate(req, huddle._id);
     res.json(huddle);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });

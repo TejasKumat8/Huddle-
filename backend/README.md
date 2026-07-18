@@ -84,7 +84,14 @@ src/
 
 ## Coming in later sessions
 
-- [ ] Socket.io: broadcast live vote/RSVP updates to everyone viewing a huddle
-- [ ] React + Redux Toolkit + Tailwind frontend
+- [x] Socket.io: broadcast live vote/RSVP updates to everyone viewing a huddle
 - [ ] Google Places API integration for location search/suggestions
 - [ ] Deployment (Render/Railway + Vercel) so it's live and shareable
+
+## Real-time updates
+
+Every mutating huddle action (join, RSVP, vote, add location, finalize) re-fetches the huddle with
+full population and emits it as a `huddleUpdated` event to the Socket.io room named after the
+huddle's id. Clients join that room when they open the huddle page. This means if three friends
+have the same huddle open, a vote from any one of them appears for the other two without a
+refresh.
