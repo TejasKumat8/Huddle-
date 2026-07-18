@@ -11,15 +11,27 @@ const huddleRoutes = require("./routes/huddleRoutes");
 const app = express();
 const server = http.createServer(app);
 
+// CLIENT_URL can be a single origin or a comma-separated list (handy for
+// Vercel, where preview deploys get their own URL alongside production).
+const allowedOrigins = (process.env.CLIENT_URL || "*")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: allowedOrigins.includes("*") ? true : allowedOrigins,
+  credentials: true,
+};
+
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_URL || "*" },
+  cors: corsOptions,
 });
 
-// Make io accessible in controllers via req.app.get("io") once we wire up
-// live vote/RSVP broadcasts in the real-time session.
+// Make io accessible in controllers via req.app.get("io") for broadcasting
+// live vote/RSVP updates.
 app.set("io", io);
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));

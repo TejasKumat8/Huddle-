@@ -23,7 +23,8 @@ in and votes — no signup wall for anyone but the organizer.
 - [x] Full React frontend — landing page, auth, dashboard, huddle creation, voting board, guest join flow
 - [x] Live updates via Socket.io — votes/RSVPs appear for everyone viewing a huddle without a refresh
 - [x] Google Places location search (needs an API key — see `frontend/README.md`)
-- [ ] Deployment
+- [x] Deployment configs ready — see [`DEPLOYMENT.md`](./DEPLOYMENT.md) for the (short) manual steps
+- [ ] Live URL — pending account setup on Render/Vercel/Atlas (all free, all require a human to click "sign up")
 
 ## Running locally
 

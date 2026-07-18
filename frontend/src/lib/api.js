@@ -1,8 +1,14 @@
 import axios from "axios";
 import { getGuestId, getGuestName } from "./guest";
 
+// In dev, VITE_API_BASE_URL is unset and requests go to "/api", proxied to
+// localhost:5000 by vite.config.js. In production, frontend (Vercel) and
+// backend (Render) live on different domains, so this points straight at
+// the deployed backend instead.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
 export const api = axios.create({
-  baseURL: "/api",
+  baseURL: `${API_BASE_URL}/api`,
 });
 
 api.interceptors.request.use((config) => {
