@@ -12,6 +12,7 @@ import {
 import { getGuestName, setGuestName as persistGuestName } from "../lib/guest";
 import Button from "../components/Button";
 import RsvpBadge from "../components/RsvpBadge";
+import LocationAutocomplete from "../components/LocationAutocomplete";
 
 function fmtDate(iso) {
   return new Date(iso).toLocaleDateString(undefined, {
@@ -29,7 +30,7 @@ export default function HuddleBoard({ huddle }) {
   const { user } = useSelector((state) => state.auth);
   const [guestNameInput, setGuestNameInput] = useState(getGuestName());
   const [addingLocation, setAddingLocation] = useState(false);
-  const [newLocation, setNewLocation] = useState({ name: "", address: "" });
+  const [newLocation, setNewLocation] = useState({ name: "", address: "", placeId: "", lat: null, lng: null });
   const [copied, setCopied] = useState(false);
 
   const isOrganizer = user && huddle.organizer?._id === user._id;
@@ -67,7 +68,7 @@ export default function HuddleBoard({ huddle }) {
     e.preventDefault();
     if (!newLocation.name.trim()) return;
     await dispatch(addLocationOption({ id: huddle._id, ...newLocation }));
-    setNewLocation({ name: "", address: "" });
+    setNewLocation({ name: "", address: "", placeId: "", lat: null, lng: null });
     setAddingLocation(false);
   };
   const handleShare = () => {
@@ -237,6 +238,17 @@ export default function HuddleBoard({ huddle }) {
                       <div>
                         <p className="font-medium">{opt.name}</p>
                         {opt.address && <p className="text-xs text-paper/40">{opt.address}</p>}
+                        {opt.lat && opt.lng && (
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${opt.lat},${opt.lng}${opt.placeId ? `&query_place_id=${opt.placeId}` : ""}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="mt-1 inline-block text-[11px] font-medium text-teal hover:underline"
+                          >
+                            View on map ↗
+                          </a>
+                        )}
                       </div>
                     </div>
                     {voted && (
@@ -262,17 +274,17 @@ export default function HuddleBoard({ huddle }) {
               <>
                 {addingLocation ? (
                   <form onSubmit={handleAddLocation} className="rounded-xl border border-dashed border-line p-4">
-                    <input
-                      value={newLocation.name}
-                      onChange={(e) => setNewLocation({ ...newLocation, name: e.target.value })}
+                    <LocationAutocomplete
+                      name={newLocation.name}
+                      onNameChange={(val) => setNewLocation({ ...newLocation, name: val })}
+                      onPlaceSelected={(place) => setNewLocation({ ...newLocation, ...place })}
                       placeholder="Spot name"
-                      autoFocus
-                      className="w-full rounded-lg border border-line bg-ink px-3 py-2 text-sm text-paper placeholder:text-paper/30 focus:border-gold focus:outline-none"
+                      className="!bg-ink"
                     />
                     <input
                       value={newLocation.address}
                       onChange={(e) => setNewLocation({ ...newLocation, address: e.target.value })}
-                      placeholder="Address (optional)"
+                      placeholder="Address (auto-filled if you pick a suggestion)"
                       className="mt-2 w-full rounded-lg border border-line bg-ink px-3 py-2 text-sm text-paper placeholder:text-paper/30 focus:border-gold focus:outline-none"
                     />
                     <div className="mt-2 flex gap-2">

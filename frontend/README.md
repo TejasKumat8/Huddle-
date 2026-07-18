@@ -61,5 +61,18 @@ src/
 ## Coming in later sessions
 
 - [x] Socket.io client — live vote/RSVP updates without refreshing
-- [ ] Google Places autocomplete for location options
+- [x] Google Places autocomplete for location options
 - [ ] Deployment (Vercel)
+
+## Google Places setup
+
+Location search uses `google.maps.places.PlaceAutocompleteElement` (the current widget — the
+older `Autocomplete` class stopped being available to new API keys as of March 2025). To enable it:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/google/maps-apis)
+2. Create a project (or use an existing one) and enable **Maps JavaScript API** and **Places API (New)**
+3. Create an API key under Credentials, and restrict it to your domain (or `localhost` while developing)
+4. Add it to `frontend/.env` as `VITE_GOOGLE_MAPS_API_KEY=your_key_here`
+
+If the key is missing or the script fails to load, location fields quietly fall back to plain
+text input — huddle creation never breaks because of it.

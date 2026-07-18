@@ -84,3 +84,9 @@ body {
     display: none;
   }
 }
+
+/* Note: Google's PlaceAutocompleteElement (used in LocationAutocomplete.jsx)
+   renders its dropdown inside a closed shadow DOM, so it can't be themed
+   with global CSS the way the legacy widget could. It's styled instead via
+   the officially-supported style properties set directly on the element
+   in JS (background-color, border, border-radius, color-scheme). */

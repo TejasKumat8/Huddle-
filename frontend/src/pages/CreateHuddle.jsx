@@ -4,12 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Plus, X } from "lucide-react";
 import { createHuddle } from "../store/huddleSlice";
 import Button from "../components/Button";
+import LocationAutocomplete from "../components/LocationAutocomplete";
 
 function emptyDateOption() {
   return { key: crypto.randomUUID(), date: "", time: "", label: "" };
 }
 function emptyLocationOption() {
-  return { key: crypto.randomUUID(), name: "", address: "" };
+  return { key: crypto.randomUUID(), name: "", address: "", placeId: "", lat: null, lng: null };
 }
 
 export default function CreateHuddle() {
@@ -46,7 +47,13 @@ export default function CreateHuddle() {
 
     const cleanLocations = locationOptions
       .filter((o) => o.name)
-      .map((o) => ({ name: o.name, address: o.address || undefined }));
+      .map((o) => ({
+        name: o.name,
+        address: o.address || undefined,
+        placeId: o.placeId || undefined,
+        lat: o.lat ?? undefined,
+        lng: o.lng ?? undefined,
+      }));
 
     const result = await dispatch(
       createHuddle({ title, description, dateOptions: cleanDates, locationOptions: cleanLocations })
@@ -148,18 +155,21 @@ export default function CreateHuddle() {
           <div className="space-y-3">
             {locationOptions.map((opt) => (
               <div key={opt.key} className="flex gap-2">
-                <input
-                  type="text"
-                  value={opt.name}
-                  onChange={(e) => updateLocationOption(opt.key, "name", e.target.value)}
+                <LocationAutocomplete
+                  name={opt.name}
+                  onNameChange={(val) => updateLocationOption(opt.key, "name", val)}
+                  onPlaceSelected={(place) =>
+                    setLocationOptions((opts) =>
+                      opts.map((o) => (o.key === opt.key ? { ...o, ...place } : o))
+                    )
+                  }
                   placeholder="e.g. Cafe Delhi Heights"
-                  className="flex-1 rounded-xl border border-line bg-ink-soft px-3 py-2.5 text-sm text-paper placeholder:text-paper/30 focus:border-gold focus:outline-none"
                 />
                 <input
                   type="text"
                   value={opt.address}
                   onChange={(e) => updateLocationOption(opt.key, "address", e.target.value)}
-                  placeholder="Address (optional)"
+                  placeholder="Address (auto-filled if you pick a suggestion)"
                   className="flex-1 rounded-xl border border-line bg-ink-soft px-3 py-2.5 text-sm text-paper placeholder:text-paper/30 focus:border-gold focus:outline-none"
                 />
                 {locationOptions.length > 1 && (

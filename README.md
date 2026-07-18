@@ -22,7 +22,7 @@ in and votes — no signup wall for anyone but the organizer.
 - [x] Auth, data models, voting/RSVP REST API
 - [x] Full React frontend — landing page, auth, dashboard, huddle creation, voting board, guest join flow
 - [x] Live updates via Socket.io — votes/RSVPs appear for everyone viewing a huddle without a refresh
-- [ ] Google Places location search
+- [x] Google Places location search (needs an API key — see `frontend/README.md`)
 - [ ] Deployment
 
 ## Running locally
